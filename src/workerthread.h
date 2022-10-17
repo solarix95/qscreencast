@@ -16,9 +16,11 @@ public:
 
     void queue(QPixmap *frame);
     void reset();
+    void shutdown();
 
 signals:
     void requestProcess();
+    void requestShutdown();
     void processedPng(QByteArray pngData);
 
 private slots:

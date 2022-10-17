@@ -65,6 +65,8 @@ MainForm::MainForm(QWidget *parent)
 //-------------------------------------------------------------------------------------------------
 MainForm::~MainForm()
 {
+    mThread.shutdown();
+    mThread.wait();
     delete ui;
 }
 

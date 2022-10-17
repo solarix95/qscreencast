@@ -7,6 +7,7 @@ WorkerThread::WorkerThread()
 {
     moveToThread(this);
     connect(this, &WorkerThread::requestProcess, this, &WorkerThread::process, Qt::QueuedConnection);
+    connect(this, &WorkerThread::requestShutdown, this, &WorkerThread::quit, Qt::QueuedConnection);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -32,6 +33,13 @@ void WorkerThread::reset()
     qDeleteAll(mFrames);
     mFrames.clear();
     mMutex.unlock();
+}
+
+//-------------------------------------------------------------------------------------------------
+void WorkerThread::shutdown()
+{
+    Q_ASSERT(QThread::currentThread() == qApp->thread());
+    emit requestShutdown();
 }
 
 //-------------------------------------------------------------------------------------------------
