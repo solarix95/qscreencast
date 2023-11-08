@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QList>
 #include <QTimer>
+#include <QStringList>
 #include "workerthread.h"
 #include "previewwidget.h"
 
@@ -28,13 +29,22 @@ private slots:
 protected:
     virtual void closeEvent(QCloseEvent *event);
 
+private slots:
+    void initRecorder();
+    void updateUi();
+
 private:
+    void createCinelerraToc(const QStringList &fileNames, const QString &tocFilename) const;
+
     Ui::MainForm      *ui;
     PreviewWidget     *mPreview;
+    QScreen           *mScreen;
     QTimer             mRecorderTimer;
     WorkerThread       mThread;
     int                mRecordWidth;
     int                mRecordHeight;
+    int                mRecordX;
+    int                mRecordY;
 
     int                mCaptureCount;
     QList<QByteArray>  mFrames;

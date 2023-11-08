@@ -6,15 +6,271 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>210</height>
+    <width>471</width>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>qrec 1.0</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="2">
+   <property name="leftMargin">
+    <number>5</number>
+   </property>
+   <property name="topMargin">
+    <number>5</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>5</number>
+   </property>
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <item row="2" column="0" colspan="6">
+    <widget class="QGroupBox" name="groupSection">
+     <property name="title">
+      <string>Section Setting</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spbWidth">
+        <property name="maximum">
+         <number>99999</number>
+        </property>
+        <property name="value">
+         <number>1400</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblDebug">
+        <property name="text">
+         <string>Width</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="lblDebug_2">
+        <property name="text">
+         <string>Offset X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Height</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spbHeight">
+        <property name="maximum">
+         <number>99999</number>
+        </property>
+        <property name="value">
+         <number>700</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QSpinBox" name="spbX">
+        <property name="toolTip">
+         <string>-1 is &quot;centered&quot;</string>
+        </property>
+        <property name="minimum">
+         <number>-1</number>
+        </property>
+        <property name="maximum">
+         <number>99999</number>
+        </property>
+        <property name="value">
+         <number>-1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Offset Y</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QSpinBox" name="spbY">
+        <property name="toolTip">
+         <string>-1 is &quot;centered&quot;</string>
+        </property>
+        <property name="minimum">
+         <number>-1</number>
+        </property>
+        <property name="maximum">
+         <number>99999</number>
+        </property>
+        <property name="value">
+         <number>-1</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QRadioButton" name="btnFullscreen">
+     <property name="text">
+      <string>Fullscreen</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="2">
+    <widget class="QLabel" name="lblFrames">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QRadioButton" name="btnSection">
+     <property name="text">
+      <string>Section</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QPushButton" name="btnStart">
+     <property name="text">
+      <string>Start</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="2">
+    <widget class="QLabel" name="lblProcessed">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Screen</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="3" colspan="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Buffersize [Mb]:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="17" column="2">
+    <widget class="QLabel" name="lblSkipped">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="2">
+    <widget class="QCheckBox" name="chkFilterDoubles">
+     <property name="text">
+      <string>Filter Freeze Frames</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QPushButton" name="btnStop">
+     <property name="text">
+      <string>Stop/Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="6">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0" colspan="2">
+    <widget class="QLabel" name="title">
+     <property name="text">
+      <string>Captured:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0" colspan="6">
+    <widget class="Line" name="line_2">
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>FPS</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0" colspan="2">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Processed:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="5">
+    <widget class="QLabel" name="lblBufferSize">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4" colspan="2">
+    <widget class="QCheckBox" name="chkCreateToc">
+     <property name="text">
+      <string>Create TOC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="2" colspan="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="12" column="4">
+    <widget class="QPushButton" name="btnTest">
+     <property name="text">
+      <string>Singleshot</string>
+     </property>
+    </widget>
+   </item>
+   <item row="17" column="3" colspan="3">
+    <widget class="QPushButton" name="btnExport">
+     <property name="text">
+      <string>Export</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
     <widget class="QSpinBox" name="spbFrames">
      <property name="minimum">
       <number>1</number>
@@ -27,29 +283,18 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="1">
-    <widget class="QLabel" name="lblSkipped">
+   <item row="17" column="0" colspan="2">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>0</string>
+      <string>FPS-Warnings:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="lblDebug">
-     <property name="text">
-      <string>Width</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QPushButton" name="btnStart">
-     <property name="text">
-      <string>Start</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
+   <item row="0" column="1">
     <widget class="QSpinBox" name="spbScreen">
+     <property name="toolTip">
+      <string>-1 is &quot;Default&quot;</string>
+     </property>
      <property name="minimum">
       <number>-1</number>
      </property>
@@ -58,138 +303,31 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="2">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Buffersize [Mb]:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="3">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Frames</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Height</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QPushButton" name="btnTest">
-     <property name="text">
-      <string>Test</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="3">
-    <widget class="QLabel" name="lblBufferSize">
-     <property name="text">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QSpinBox" name="spbHeight">
-     <property name="maximum">
-      <number>99999</number>
-     </property>
-     <property name="value">
-      <number>700</number>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
+   <item row="12" column="5">
     <widget class="QLabel" name="lblTime">
      <property name="text">
       <string>? [ms]</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="2" colspan="2">
-    <widget class="QPushButton" name="btnExport">
+   <item row="16" column="0" colspan="2">
+    <widget class="QLabel" name="label_8">
      <property name="text">
-      <string>Export</string>
+      <string>Export Queue</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QSpinBox" name="spbWidth">
-     <property name="maximum">
-      <number>99999</number>
-     </property>
-     <property name="value">
-      <number>1400</number>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1">
-    <widget class="QPushButton" name="btnStop">
-     <property name="text">
-      <string>Stop</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0" colspan="5">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0" colspan="5">
-    <widget class="Line" name="line_2">
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0">
-    <widget class="QLabel" name="title">
-     <property name="text">
-      <string>Captured:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Screen</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Warnings:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="1">
-    <widget class="QLabel" name="lblFrames">
+   <item row="16" column="2">
+    <widget class="QLabel" name="lblExportFrames">
      <property name="text">
       <string>0</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Processed:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
-    <widget class="QLabel" name="lblProcessed">
-     <property name="text">
-      <string>0</string>
+   <item row="16" column="3" colspan="3">
+    <widget class="QLineEdit" name="edtProjectName">
+     <property name="placeholderText">
+      <string>Cast Name</string>
      </property>
     </widget>
    </item>

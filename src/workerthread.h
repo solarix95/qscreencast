@@ -17,18 +17,26 @@ public:
     void queue(QPixmap *frame);
     void reset();
     void shutdown();
+    void setFilterFreezeFrames(bool filter);
+    int  processedFrames() const;
 
 signals:
     void requestProcess();
     void requestShutdown();
     void processedPng(QByteArray pngData);
+    void frameProcessed();
 
 private slots:
     void process();
 
 private:
-    QMutex           mMutex;
+    static bool isIdenticalFrame(const QPixmap &p1, const QPixmap &p2);
+
+    bool             mFilterFreezeFrames;
+    mutable QMutex   mMutex;
     QList<QPixmap*>  mFrames;
+    QPixmap*         mLastFrame;
+    int              mProcessedFrames;
 };
 
 #endif // WORKERTHREAD_H
