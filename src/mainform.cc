@@ -9,6 +9,7 @@
 #include <QTime>
 #include <QFileDialog>
 #include <QDateTime>
+#include <QComboBox>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
@@ -61,7 +62,7 @@ MainForm::MainForm(QWidget *parent)
         screenShot(false);
     });
 
-    connect(&mThread, &WorkerThread::processedPng, this, &MainForm::appendFrame);
+    connect(&mThread, &WorkerThread::processedFrame, this, &MainForm::appendFrame);
     connect(&mThread, &WorkerThread::frameProcessed, this, [this]() {
          updateUi();
     });
@@ -140,8 +141,9 @@ void MainForm::exportRecorder()
     QDir d;
     d.mkpath(export2Dir);
     QStringList fileNames;
+    QString fileExt = mFileformat.toLower();
     for(int i=0; i<mFrames.count(); i++) {
-        QFile f(QString("%1/%2.png").arg(export2Dir).arg(i+1,6,10,QChar('0')));
+        QFile f(QString("%1/%2.%3").arg(export2Dir).arg(i+1,6,10,QChar('0')).arg(fileExt));
         if (!f.open(QIODevice::WriteOnly))
             return;
         f.write(mFrames[i]);
@@ -219,6 +221,13 @@ void MainForm::initRecorder()
         mRecordWidth = screenSize.width() - mRecordX;
     if ((mRecordHeight + mRecordY) > screenSize.height())
         mRecordHeight = screenSize.height() - mRecordY;
+
+    // Update Export Fileformat Infos
+    mThread.setImageFormat(ui->cbxFormat->currentText());
+    mFileformat = ui->cbxFormat->currentText();
+    if (mFileformat.contains("-"))
+        mFileformat = mFileformat.split("-").first(); // "JPG-70" -> "JPG";
+    ui->lblFormat->setText(mFileformat);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -231,6 +240,8 @@ void MainForm::updateUi()
     ui->lblExportFrames->setText(QString::number(mFrames.count()));
 
     ui->btnExport->setEnabled(!mRecorderTimer.isActive() && mFrames.count() > 0 && (mThread.processedFrames() == mCaptureCount));
+    ui->cbxFormat->setEnabled(!mRecorderTimer.isActive());
+    ui->chkStream->setEnabled(!mRecorderTimer.isActive());
 }
 
 //-------------------------------------------------------------------------------------------------

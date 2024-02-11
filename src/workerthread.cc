@@ -12,6 +12,7 @@ WorkerThread::WorkerThread()
     moveToThread(this);
     connect(this, &WorkerThread::requestProcess, this, &WorkerThread::process, Qt::QueuedConnection);
     connect(this, &WorkerThread::requestShutdown, this, &WorkerThread::quit, Qt::QueuedConnection);
+    mImageFormat = "PNG";
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -19,6 +20,15 @@ WorkerThread::~WorkerThread()
 {
     qDeleteAll(mFrames);
     mFrames.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
+void WorkerThread::setImageFormat(const QString &formatName)
+{
+    mMutex.lock();
+    mImageFormat = formatName;
+    Q_ASSERT(!mImageFormat.isEmpty());
+    mMutex.unlock();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -101,8 +111,12 @@ void WorkerThread::process()
     QByteArray pngData;
     QBuffer    buffer(&pngData);
 
-    p->save(&buffer,"PNG");
-    emit processedPng(pngData);
+    if (mImageFormat.startsWith("JPG-"))
+        p->save(&buffer,"JPG",mImageFormat.split("-")[1].toInt());
+    else
+        p->save(&buffer,mImageFormat.toUtf8().constData());
+
+    emit processedFrame(pngData);
     if (mLastFrame)
         delete mLastFrame;
     mLastFrame = p;

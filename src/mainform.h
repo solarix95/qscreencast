@@ -47,6 +47,7 @@ private:
     int                mRecordY;
 
     int                mCaptureCount;
+    QString            mFileformat;
     QList<QByteArray>  mFrames;
     int                mRecorderSize;
     QString            mLastExportDir;

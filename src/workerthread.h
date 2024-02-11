@@ -14,6 +14,8 @@ public:
     WorkerThread();
     virtual ~WorkerThread();
 
+
+    void setImageFormat(const QString &formatName);
     void queue(QPixmap *frame);
     void reset();
     void shutdown();
@@ -23,7 +25,7 @@ public:
 signals:
     void requestProcess();
     void requestShutdown();
-    void processedPng(QByteArray pngData);
+    void processedFrame(QByteArray pngData);
     void frameProcessed();
 
 private slots:
@@ -37,6 +39,7 @@ private:
     QList<QPixmap*>  mFrames;
     QPixmap*         mLastFrame;
     int              mProcessedFrames;
+    QString          mImageFormat;
 };
 
 #endif // WORKERTHREAD_H
