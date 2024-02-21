@@ -22,6 +22,7 @@
 MainForm::MainForm(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MainForm)
+    , mCaptureCount(0)
 {
     ui->setupUi(this);
     mPreview = new PreviewWidget();
@@ -37,6 +38,11 @@ MainForm::MainForm(QWidget *parent)
 
     connect(ui->btnStart, &QPushButton::clicked, this, [&](){
         initRecorder();
+        if (ui->chkStream->isChecked()) {
+            if (prepareCast().isEmpty())
+                return;
+            mCache.startStream();
+        }
         mRecorderTimer.start(1000/ui->spbFrames->value());
     });
 
@@ -68,6 +74,8 @@ MainForm::MainForm(QWidget *parent)
     });
 
     mThread.start();
+    mCache.start();
+
     ui->btnExport->setEnabled(false);
 
     restoreState();
@@ -79,6 +87,10 @@ MainForm::~MainForm()
 {
     mThread.shutdown();
     mThread.wait();
+
+    mCache.shutdown();
+    mCache.wait();
+
     delete ui;
 }
 
@@ -111,62 +123,38 @@ void MainForm::screenShot(bool preview)
 }
 
 //-------------------------------------------------------------------------------------------------
-void MainForm::appendFrame(QByteArray pngData)
+void MainForm::appendFrame(QByteArray imgData)
 {
-    mFrames << pngData;
-    mRecorderSize += pngData.size();
-    ui->lblBufferSize->setText(QString::number(mRecorderSize/1000000.0));
+    mCache.enqueue(imgData);
+    ui->lblBufferSize->setText(QString::number(mCache.cacheSize()/1000000.0));
     updateUi();
 }
 
 //-------------------------------------------------------------------------------------------------
 void MainForm::exportRecorder()
 {
-    QString export2Dir = QFileDialog::getExistingDirectory(this,"Export path",mLastExportDir);
-    if (export2Dir.isEmpty())
+    QString newCastName = prepareCast();
+    if (newCastName.isEmpty())
         return;
 
-    mLastExportDir = export2Dir;
+    if (ui->chkCreateToc->isChecked())
+        mCache.dumpToDisk(newCastName,ui->spbFrames->value(),mRecordWidth,mRecordHeight);
+    else
+        mCache.dumpToDisk();
 
-    QString castName = ui->edtProjectName->text().trimmed().simplified();
-    if (castName.isEmpty())
-        castName  = QString("%1-%2")
-                .arg("Screencast-")
-                .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-sss"));
-
-    export2Dir = QString("%1/%2")
-                    .arg(export2Dir)
-                    .arg(castName);
-
-    QDir d;
-    d.mkpath(export2Dir);
-    QStringList fileNames;
-    QString fileExt = mFileformat.toLower();
-    for(int i=0; i<mFrames.count(); i++) {
-        QFile f(QString("%1/%2.%3").arg(export2Dir).arg(i+1,6,10,QChar('0')).arg(fileExt));
-        if (!f.open(QIODevice::WriteOnly))
-            return;
-        f.write(mFrames[i]);
-        fileNames << f.fileName();
-    }
-
-    if (ui->chkCreateToc->isChecked()) {
-        createCinelerraToc(fileNames,export2Dir + "/" + castName + ".toc");
-    }
     QMessageBox::information(this,"Export..", "..done!");
 }
 
 //-------------------------------------------------------------------------------------------------
 void MainForm::resetRecorder()
 {
-    mFrames.clear();
+    mCache.reset();
     ui->lblSkipped->setText("0");
     ui->lblFrames->setText("0");
     ui->lblBufferSize->setText("0");
     ui->lblFrames->setText("0");
     ui->lblProcessed->setText("0");
 
-    mRecorderSize = 0;
     mCaptureCount = 0;
     mThread.reset();
     mThread.setFilterFreezeFrames(ui->chkFilterDoubles->isChecked());
@@ -231,43 +219,59 @@ void MainForm::initRecorder()
 }
 
 //-------------------------------------------------------------------------------------------------
+void MainForm::prepareExport()
+{
+
+}
+
+//-------------------------------------------------------------------------------------------------
 void MainForm::updateUi()
 {
     ui->groupSection->setEnabled(ui->btnSection->isChecked());
 
     ui->lblFrames->setText(QString::number(mCaptureCount));
     ui->lblProcessed->setText(QString::number(mThread.processedFrames()));
-    ui->lblExportFrames->setText(QString::number(mFrames.count()));
+    ui->lblExportFrames->setText(QString::number(mCache.count()));
 
-    ui->btnExport->setEnabled(!mRecorderTimer.isActive() && mFrames.count() > 0 && (mThread.processedFrames() == mCaptureCount));
+    ui->btnExport->setEnabled(!mRecorderTimer.isActive() && mCache.count() > 0 && (mThread.processedFrames() == mCaptureCount));
     ui->cbxFormat->setEnabled(!mRecorderTimer.isActive());
     ui->chkStream->setEnabled(!mRecorderTimer.isActive());
 }
 
 //-------------------------------------------------------------------------------------------------
-void MainForm::createCinelerraToc(const QStringList &fileNames, const QString &tocFilename) const
+QString MainForm::castName() const
 {
-    if (fileNames.isEmpty())
-        return;
-
-    if (!fileNames.first().toLower().endsWith(".png")) // cinelerra TOC only with PNG
-        return;
-
-    QFile f(tocFilename);
-    if (!f.open(QIODevice::WriteOnly))
-        return;
-    f.write("PNGLIST\n");
-    f.write("#CREATED BY QScreenCast\n");
-    f.write(QString("%1 #FPS\n").arg(ui->spbFrames->value()).toUtf8());
-    f.write(QString("%1 #Width\n").arg(mRecordWidth).toUtf8());
-    f.write(QString("%1 #Height\n").arg(mRecordHeight).toUtf8());
-    f.write("#FILES\n");
-    for (auto name: fileNames)
-        f.write(QString("%1\n").arg(name).toUtf8());
-    f.close();
+    QString newCastName = ui->edtProjectName->text().trimmed().simplified();
+    if (newCastName.isEmpty()) {
+        newCastName  = QString("%1-%2")
+                .arg("Screencast-")
+                .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-sss"));
+    }
+    return newCastName;
 }
 
+//-------------------------------------------------------------------------------------------------
+QString MainForm::prepareCast()
+{
+    QString export2Dir = QFileDialog::getExistingDirectory(this,"Export path",mLastExportDir);
+    if (export2Dir.isEmpty())
+        return "";
 
+    mLastExportDir = export2Dir;
+
+    QString newCastName = castName();
+
+    export2Dir = QString("%1/%2")
+                    .arg(export2Dir)
+                    .arg(newCastName);
+
+    QDir d;
+    d.mkpath(export2Dir);
+
+    QString fileExt = mFileformat.toLower();
+    mCache.setup(fileExt,export2Dir);
+    return newCastName;
+}
 
 //-------------------------------------------------------------------------------------------------
 void MainForm::storeState()
@@ -283,6 +287,12 @@ void MainForm::storeState()
     settings.setValue("source/fullscreen", ui->btnFullscreen->isChecked());
 
     settings.setValue("export/path", mLastExportDir);
+    settings.setValue("export/castname", ui->edtProjectName->text().trimmed());
+
+    // Flags
+    settings.setValue("options/filterfreeze", ui->chkFilterDoubles->isChecked());
+    settings.setValue("options/createtoc", ui->chkCreateToc->isChecked());
+    settings.setValue("options/streamtohd", ui->chkStream->isChecked());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -300,4 +310,11 @@ void MainForm::restoreState()
     ui->spbFrames->setValue(settings.value("source/fps",25).toInt());
 
     mLastExportDir = settings.value("export/path").toString();
+    ui->edtProjectName->setText(settings.value("source/castname","").toString());
+
+
+    // Stream
+    ui->chkFilterDoubles->setChecked(settings.value("options/filterfreeze",false).toBool());
+    ui->chkCreateToc->setChecked(settings.value("options/createtoc",false).toBool());
+    ui->chkStream->setChecked(settings.value("options/streamtohd",false).toBool());
 }

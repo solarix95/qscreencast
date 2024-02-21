@@ -5,7 +5,9 @@
 #include <QList>
 #include <QTimer>
 #include <QStringList>
+
 #include "workerthread.h"
+#include "imagecache.h"
 #include "previewwidget.h"
 
 namespace Ui {
@@ -31,16 +33,20 @@ protected:
 
 private slots:
     void initRecorder();
+    void prepareExport();
     void updateUi();
 
 private:
-    void createCinelerraToc(const QStringList &fileNames, const QString &tocFilename) const;
+    QString castName() const;
+    QString prepareCast();
 
     Ui::MainForm      *ui;
     PreviewWidget     *mPreview;
     QScreen           *mScreen;
     QTimer             mRecorderTimer;
     WorkerThread       mThread;
+    ImageCache         mCache;       // In-Memory-Cache and also Dump-to-Disk-Thread
+
     int                mRecordWidth;
     int                mRecordHeight;
     int                mRecordX;
@@ -48,10 +54,7 @@ private:
 
     int                mCaptureCount;
     QString            mFileformat;
-    QList<QByteArray>  mFrames;
-    int                mRecorderSize;
     QString            mLastExportDir;
-
 
     void storeState();
     void restoreState();

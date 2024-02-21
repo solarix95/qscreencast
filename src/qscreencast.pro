@@ -10,6 +10,7 @@ CONFIG += c++11
 
 # Input
 SOURCES += main.cc \
+    imagecache.cc \
     mainform.cc \
     previewimage.cc \
     previewwidget.cc \
@@ -20,6 +21,7 @@ FORMS += \
     previewwidget.ui
 
 HEADERS += \
+    imagecache.h \
     mainform.h \
     previewimage.h \
     previewwidget.h \
